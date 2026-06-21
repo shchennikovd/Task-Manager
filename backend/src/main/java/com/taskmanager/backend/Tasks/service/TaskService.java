@@ -126,4 +126,11 @@ public class TaskService {
                 .getAuthentication()
                 .getPrincipal();
     }
+
+    // BATCH
+    public List<TaskResponse> createTasks(List<CreateTaskRequest> requests) {
+        return requests.stream()
+                .map(this::createTask)
+                .toList();
+    }
 }

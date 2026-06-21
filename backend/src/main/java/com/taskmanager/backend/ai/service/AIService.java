@@ -1,19 +1,23 @@
 package com.taskmanager.backend.ai.service;
 
-import com.taskmanager.backend.ai.dto.AIRequest;
-import com.taskmanager.backend.ai.dto.AIResponse;
-import com.taskmanager.backend.ai.dto.OpenRouterRequest;
-import com.taskmanager.backend.ai.dto.OpenRouterResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taskmanager.backend.ai.client.OpenRouterClient;
+import com.taskmanager.backend.ai.dto.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class AIService {
+
+    private final OpenRouterClient client;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public AIService(OpenRouterClient client) {
+        this.client = client;
+    }
 
     @Value("${openrouter.api.key}")
     private String apiKey;
@@ -24,62 +28,54 @@ public class AIService {
     @Value("${openrouter.model}")
     private String model;
 
-    private final RestClient restClient = RestClient.create();
-
     public AIResponse suggestSubtasks(AIRequest request) {
 
         String prompt = """
-                Ты помощник по управлению проектами.
+Ты помощник по управлению проектами.
 
-                Разбей следующую задачу на 5-7 коротких подзадач.
+Разбей задачу на 3–6 подзадач.
 
-                Верни ТОЛЬКО список.
-                Каждая строка должна начинаться с "- ".
+Верни ТОЛЬКО JSON массив. Не добавляй никаких объяснений, только JSON. Не используй markdown. Не оборачивай в '''\s:
 
-                Задача:
-                %s
-                """.formatted(request.getDescription());
+[
+  {
+    "title": "Название задачи",
+    "description": "Описание",
+    "date": "2026-06-21",
+    "priority": "low",
+    "status": "pending",
+    "color": "#ffffff"
+  }
+]
+
+Задача:
+%s
+""".formatted(request.getDescription());
 
         OpenRouterRequest body = new OpenRouterRequest(
                 model,
-                List.of(
-                        new OpenRouterRequest.Message(
-                                "user",
-                                prompt
-                        )
-                )
+                List.of(new OpenRouterRequest.Message("user", prompt))
         );
 
         OpenRouterResponse response =
-                restClient.post()
-                        .uri(apiUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + apiKey)
-                        .header("HTTP-Referer", "http://localhost:8080")
-                        .header("X-Title", "Task Manager")
-                        .body(body)
-                        .retrieve()
-                        .body(OpenRouterResponse.class);
+                client.call(apiUrl, apiKey, body);
 
-        if (response == null
-                || response.getChoices() == null
-                || response.getChoices().isEmpty()) {
-
-            return new AIResponse(List.of("ИИ не вернул ответ"));
+        if (response == null || response.getChoices().isEmpty()) {
+            return new AIResponse(List.of());
         }
 
-        String content = response.getChoices()
-                .get(0)
-                .getMessage()
-                .getContent();
+        String content = response.getChoices().get(0).getMessage().getContent();
 
-        List<String> suggestions = Arrays.stream(content.split("\n"))
-                .map(String::trim)
-                .filter(s -> !s.isBlank())
-                .map(s -> s.replaceFirst("^-\\s*", ""))
-                .toList();
+        try {
+            List<AITaskDto> tasks = objectMapper.readValue(
+                    content,
+                    new TypeReference<List<AITaskDto>>() {}
+            );
 
-        return new AIResponse(suggestions);
+            return new AIResponse(tasks);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid AI JSON:\n" + content);
+        }
     }
-
 }
