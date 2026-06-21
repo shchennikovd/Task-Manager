@@ -1,17 +1,18 @@
 services:
-  mysql:
-    image: mysql:8.4
-    container_name: task-manager-mysql
+  postgres:
+    image: postgres:16
+    container_name: task-manager-postgres
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: task_manager_db
+      POSTGRES_DB: task_manager_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d task_manager_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,16 +22,16 @@ services:
     container_name: task-manager-backend
     restart: always
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/task_manager_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/task_manager_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
       JWT_SECRET: very-secret-key-for-jwt-token-change-later-very-long
       JWT_EXPIRATION: 86400000
     ports:
       - "8080:8080"
 
 volumes:
-  mysql_data:
+  postgres_data:

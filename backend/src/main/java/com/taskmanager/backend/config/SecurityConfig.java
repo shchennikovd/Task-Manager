@@ -42,8 +42,7 @@ public class SecurityConfig {
                                 "/api/auth/signup",
                                 "/api/auth/login",
                                 "/api/auth/logout",
-                                "/api/health",
-                                "/api/ai/**"
+                                "/api/health"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

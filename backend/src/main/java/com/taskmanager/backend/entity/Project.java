@@ -21,6 +21,7 @@ public class Project {
     @JoinColumn(name = "user_id", nullable = false)
     private User owner;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @PrePersist
