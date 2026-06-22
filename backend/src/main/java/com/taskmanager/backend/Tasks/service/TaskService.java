@@ -8,6 +8,8 @@ import com.taskmanager.backend.Tasks.enums.Priority;
 import com.taskmanager.backend.Tasks.enums.Status;
 import com.taskmanager.backend.Tasks.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import com.taskmanager.backend.entity.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +41,7 @@ public class TaskService {
             task.setStatus(Status.valueOf(request.getStatus().toUpperCase()));
         }
 
+        task.setUser(getCurrentUser());
         Task saved = taskRepository.save(task);
 
         return mapToResponse(saved);
@@ -46,7 +49,7 @@ public class TaskService {
 
     // GET ALL
     public List<TaskResponse> getAllTasks() {
-        return taskRepository.findAll()
+        return taskRepository.findByUser(getCurrentUser())
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
@@ -56,6 +59,9 @@ public class TaskService {
     public TaskResponse getTaskById(UUID id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
+        if (!task.getUser().getId().equals(getCurrentUser().getId())) {
+            throw new RuntimeException("Access denied");
+        }
 
         return mapToResponse(task);
     }
@@ -65,6 +71,10 @@ public class TaskService {
 
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (!task.getUser().getId().equals(getCurrentUser().getId())) {
+            throw new RuntimeException("Access denied");
+        }
 
         if (request.getTitle() != null) task.setTitle(request.getTitle());
         if (request.getDescription() != null) task.setDescription(request.getDescription());
@@ -84,7 +94,15 @@ public class TaskService {
 
     // DELETE
     public void deleteTask(UUID id) {
-        taskRepository.deleteById(id);
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (!task.getUser().getId().equals(getCurrentUser().getId())) {
+            throw new RuntimeException("Access denied");
+        }
+
+        taskRepository.delete(task);
     }
 
     // MAPPER (чтобы не дублировать код)
@@ -101,5 +119,18 @@ public class TaskService {
         response.setStatus(task.getStatus() != null ? task.getStatus().name() : null);
 
         return response;
+    }
+
+    private User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
+
+    // BATCH
+    public List<TaskResponse> createTasks(List<CreateTaskRequest> requests) {
+        return requests.stream()
+                .map(this::createTask)
+                .toList();
     }
 }
