@@ -7,9 +7,9 @@ import com.taskmanager.backend.Tasks.entity.Task;
 import com.taskmanager.backend.Tasks.enums.Priority;
 import com.taskmanager.backend.Tasks.enums.Status;
 import com.taskmanager.backend.Tasks.repository.TaskRepository;
-import org.springframework.stereotype.Service;
 import com.taskmanager.backend.entity.User;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,9 +25,11 @@ public class TaskService {
 
     // CREATE
     public TaskResponse createTask(CreateTaskRequest request) {
+        User user = getCurrentUser();
 
         Task task = new Task();
 
+        task.setUser(user);
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
         task.setDate(request.getDate());
@@ -41,7 +43,6 @@ public class TaskService {
             task.setStatus(Status.valueOf(request.getStatus().toUpperCase()));
         }
 
-        task.setUser(getCurrentUser());
         Task saved = taskRepository.save(task);
 
         return mapToResponse(saved);
@@ -49,7 +50,9 @@ public class TaskService {
 
     // GET ALL
     public List<TaskResponse> getAllTasks() {
-        return taskRepository.findByUser(getCurrentUser())
+        User user = getCurrentUser();
+
+        return taskRepository.findByUser(user)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
@@ -57,24 +60,20 @@ public class TaskService {
 
     // GET BY ID
     public TaskResponse getTaskById(UUID id) {
-        Task task = taskRepository.findById(id)
+        User user = getCurrentUser();
+
+        Task task = taskRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
-        if (!task.getUser().getId().equals(getCurrentUser().getId())) {
-            throw new RuntimeException("Access denied");
-        }
 
         return mapToResponse(task);
     }
 
     // UPDATE (PATCH)
     public TaskResponse updateTask(UUID id, UpdateTaskRequest request) {
+        User user = getCurrentUser();
 
-        Task task = taskRepository.findById(id)
+        Task task = taskRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
-
-        if (!task.getUser().getId().equals(getCurrentUser().getId())) {
-            throw new RuntimeException("Access denied");
-        }
 
         if (request.getTitle() != null) task.setTitle(request.getTitle());
         if (request.getDescription() != null) task.setDescription(request.getDescription());
@@ -94,15 +93,25 @@ public class TaskService {
 
     // DELETE
     public void deleteTask(UUID id) {
+        User user = getCurrentUser();
 
-        Task task = taskRepository.findById(id)
+        Task task = taskRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        if (!task.getUser().getId().equals(getCurrentUser().getId())) {
-            throw new RuntimeException("Access denied");
+        taskRepository.delete(task);
+    }
+
+    private User getCurrentUser() {
+        Object principal = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (principal instanceof User user) {
+            return user;
         }
 
-        taskRepository.delete(task);
+        throw new RuntimeException("User not authenticated");
     }
 
     // MAPPER (чтобы не дублировать код)
@@ -119,18 +128,5 @@ public class TaskService {
         response.setStatus(task.getStatus() != null ? task.getStatus().name() : null);
 
         return response;
-    }
-
-    private User getCurrentUser() {
-        return (User) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
-
-    // BATCH
-    public List<TaskResponse> createTasks(List<CreateTaskRequest> requests) {
-        return requests.stream()
-                .map(this::createTask)
-                .toList();
     }
 }

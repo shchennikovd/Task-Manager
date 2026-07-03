@@ -1,22 +1,16 @@
 package com.taskmanager.backend.ai.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class AIResponse {
 
-    private List<AITaskDto> tasks;
+    private List<String> suggestions;
 
-    public AIResponse() {}
-
-    public AIResponse(List<AITaskDto> tasks) {
-        this.tasks = tasks;
-    }
-
-    public List<AITaskDto> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<AITaskDto> tasks) {
-        this.tasks = tasks;
-    }
 }

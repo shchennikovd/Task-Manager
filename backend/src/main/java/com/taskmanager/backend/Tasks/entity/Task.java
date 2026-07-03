@@ -1,8 +1,8 @@
 package com.taskmanager.backend.Tasks.entity;
 
-import com.taskmanager.backend.entity.User;
 import com.taskmanager.backend.Tasks.enums.Priority;
 import com.taskmanager.backend.Tasks.enums.Status;
+import com.taskmanager.backend.entity.User;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -10,6 +10,18 @@ import java.util.UUID;
 @Entity
 @Table(name = "tasks")
 public class Task {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Id
     @GeneratedValue
@@ -28,10 +40,6 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private Status status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
 
     // ID
     public UUID getId() {
@@ -94,13 +102,5 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

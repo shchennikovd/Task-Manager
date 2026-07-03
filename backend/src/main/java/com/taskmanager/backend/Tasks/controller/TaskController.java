@@ -49,10 +49,4 @@ public class TaskController {
     public void deleteTask(@PathVariable UUID id) {
         taskService.deleteTask(id);
     }
-
-    // BATCH
-    @PostMapping("/batch")
-    public List<TaskResponse> createTasks(@RequestBody List<CreateTaskRequest> requests) {
-        return taskService.createTasks(requests);
-    }
 }
