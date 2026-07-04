@@ -4,6 +4,7 @@ import { taskStore } from "../store";
 import { useState } from "react";
 import { EditTaskModal } from "./EditTaskModal";
 import { PRIORITY_LABELS, priorityColors } from "../../constants/priority";
+import { useUi } from "../context/UiContext";
 
 interface TaskCardProps {
   task: Task;
@@ -11,6 +12,7 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, showDate = false }: TaskCardProps) {
+  const { openAiChat } = useUi();
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [showEditModal, setShowEditModal] = useState(false);
@@ -57,9 +59,7 @@ export function TaskCard({ task, showDate = false }: TaskCardProps) {
 
   const handleAddToAI = () => {
     setShowContextMenu(false);
-    // Dispatch custom event to open AI chat with this task
-    const event = new CustomEvent("addTaskToAI", { detail: task });
-    window.dispatchEvent(event);
+    openAiChat(task);
   };
 
   const completedSubtasks = task.subtasks?.filter((st) => st.completed).length || 0;

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Check, Calendar as CalendarIcon, Plus } from "lucide-react";
+import { X, Check, Calendar as CalendarIcon } from "lucide-react";
 import { taskStore } from "../store";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 
 const TASK_COLORS = [
   { name: "Red", value: "#ef4444" },
@@ -15,13 +16,13 @@ const TASK_COLORS = [
 
 const formatDateForInput = (date: Date): string => {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
 const parseDateString = (dateString: string): Date => {
-  const [year, month, day] = dateString.split('-').map(Number);
+  const [year, month, day] = dateString.split("-").map(Number);
   return new Date(year, month - 1, day);
 };
 
@@ -39,20 +40,11 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   const datePickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleEscape);
-    return () => {
-      document.body.style.overflow = "unset";
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [onClose]);
-
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
+      if (
+        datePickerRef.current &&
+        !datePickerRef.current.contains(event.target as Node)
+      ) {
         setShowCustomDatePicker(false);
       }
     };
@@ -78,10 +70,6 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     onClose();
   };
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
   const handleQuickDateSelect = (days: number) => {
     const d = new Date();
     d.setDate(d.getDate() + days);
@@ -94,30 +82,37 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    
+
     if (d.toDateString() === today.toDateString()) return "Сегодня";
     if (d.toDateString() === tomorrow.toDateString()) return "Завтра";
     return d.toLocaleDateString("ru-RU", { month: "short", day: "numeric" });
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-[#141414] border border-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <Dialog open={true} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="bg-[#141414] border-gray-800 p-0 overflow-hidden max-w-2xl [&>button]:hidden">
+        {/* Заголовок */}
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
-          <h2 className="text-xl font-semibold text-gray-100 flex items-center gap-2">
+          <DialogTitle className="text-xl font-semibold text-gray-100 flex items-center gap-2">
             Добавить задачу
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-gray-100">
+          </DialogTitle>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-gray-100"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        {/* Форма с прокруткой */}
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 space-y-4 max-h-[80vh] overflow-y-auto"
+        >
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Название</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Название
+            </label>
             <input
               type="text"
               value={title}
@@ -130,7 +125,9 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Описание</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Описание
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -141,9 +138,11 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-300">Дата</label>
+            <label className="block text-sm font-medium text-gray-300">
+              Дата
+            </label>
             <div className="flex gap-2 flex-wrap">
-                <button
+              <button
                 type="button"
                 onClick={() => handleQuickDateSelect(0)}
                 className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
@@ -208,11 +207,15 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                 )}
               </div>
             </div>
-            <p className="text-xs text-gray-500">Выбрана: {getDateLabel(date)}</p>
+            <p className="text-xs text-gray-500">
+              Выбрана: {getDateLabel(date)}
+            </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Приоритет</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Приоритет
+            </label>
             <div className="flex gap-2">
               {(["low", "medium", "high"] as const).map((p) => (
                 <button
@@ -221,18 +224,28 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                   onClick={() => setPriority(p)}
                   className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
                     priority === p
-                      ? p === "high" ? "bg-red-900/20 border-red-700 text-red-400" : p === "medium" ? "bg-yellow-900/20 border-yellow-700 text-yellow-400" : "bg-blue-900/20 border-blue-700 text-blue-400"
+                      ? p === "high"
+                        ? "bg-red-900/20 border-red-700 text-red-400"
+                        : p === "medium"
+                        ? "bg-yellow-900/20 border-yellow-700 text-yellow-400"
+                        : "bg-blue-900/20 border-blue-700 text-blue-400"
                       : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
                   }`}
                 >
-                  {p === "low" ? "Низкий" : p === "medium" ? "Средний" : "Высокий"}
+                  {p === "low"
+                    ? "Низкий"
+                    : p === "medium"
+                    ? "Средний"
+                    : "Высокий"}
                 </button>
               ))}
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Цвет</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Цвет
+            </label>
             <div className="flex gap-2 flex-wrap">
               {TASK_COLORS.map((tc) => (
                 <button
@@ -240,24 +253,37 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                   type="button"
                   onClick={() => setColor(tc.value)}
                   className="relative w-8 h-8 rounded-lg border-2 transition-all hover:scale-110"
-                  style={{ backgroundColor: tc.value, borderColor: color === tc.value ? tc.value : "transparent" }}
+                  style={{
+                    backgroundColor: tc.value,
+                    borderColor:
+                      color === tc.value ? tc.value : "transparent",
+                  }}
                 >
-                  {color === tc.value && <Check className="w-4 h-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
+                  {color === tc.value && (
+                    <Check className="w-4 h-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                  )}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all font-medium">
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all font-medium"
+            >
               Добавить задачу
             </button>
-            <button type="button" onClick={onClose} className="px-6 py-2.5 bg-[#0f0f0f] border border-gray-800 hover:bg-gray-800 text-gray-400 rounded-lg transition-colors">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2.5 bg-[#0f0f0f] border border-gray-800 hover:bg-gray-800 text-gray-400 rounded-lg transition-colors"
+            >
               Отмена
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

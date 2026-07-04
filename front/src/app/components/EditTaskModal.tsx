@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Task } from "../types";
 import { X, Check, Calendar as CalendarIcon } from "lucide-react";
 import { taskStore } from "../store";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 
 const TASK_COLORS = [
   { name: "Red", value: "#ef4444" },
@@ -28,14 +29,6 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
     new Date(task.date).toISOString().split("T")[0]
   );
 
-  useEffect(() => {
-    // Предотвращает прокрутку при открытом модальном окне
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -52,23 +45,14 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
     onClose();
   };
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <div
-      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-[#141414] border border-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <Dialog open={true} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="bg-[#141414] border-gray-800 p-0 overflow-hidden max-w-2xl [&>button]:hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
-          <h2 className="text-xl font-semibold text-gray-100">
+          <DialogTitle className="text-xl font-semibold text-gray-100">
             Редактировать задачу
-          </h2>
+          </DialogTitle>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-gray-100"
@@ -78,7 +62,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -211,7 +195,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -3,6 +3,7 @@ import { X, Search, Inbox, CalendarDays, Calendar, CheckCircle2 } from "lucide-r
 import { useNavigate } from "react-router";
 import { taskStore } from "../store";
 import { Task } from "../types";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 
 interface SearchModalProps {
   onClose: () => void;
@@ -23,32 +24,11 @@ export function SearchModal({ onClose }: SearchModalProps) {
   }, []);
 
   useEffect(() => {
-    // Focus input when modal opens
-    inputRef.current?.focus();
-
-    // Prevent scrolling when modal is open
-    document.body.style.overflow = "hidden";
-
-    // Handle Escape key
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.body.style.overflow = "unset";
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [onClose]);
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
+    const timeout = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 50);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -56,7 +36,6 @@ export function SearchModal({ onClose }: SearchModalProps) {
   };
 
   const handleTaskClick = (task: Task) => {
-    // Navigate to appropriate view based on task
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const taskDate = new Date(task.date);
@@ -72,7 +51,6 @@ export function SearchModal({ onClose }: SearchModalProps) {
     onClose();
   };
 
-  // Filter tasks based on search query
   const filteredTasks = tasks.filter(
     (task) =>
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -87,11 +65,12 @@ export function SearchModal({ onClose }: SearchModalProps) {
   ];
 
   return (
-    <div
-      className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 pt-20"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-[#141414] border border-gray-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+    <Dialog open={true} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent 
+        className="bg-[#141414] border-gray-800 p-0 overflow-hidden max-w-2xl flex flex-col !top-[10%] !translate-y-0 max-h-[80vh] [&>button]:hidden"
+      >
+        <DialogTitle className="sr-only">Поиск по задачам</DialogTitle>
+        
         {/* Search Input */}
         <div className="p-4 border-b border-gray-800">
           <div className="relative">
@@ -116,7 +95,6 @@ export function SearchModal({ onClose }: SearchModalProps) {
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4">
           {searchQuery.trim() === "" ? (
-            // Navigation when no search query
             <div>
               <h3 className="text-sm font-medium text-gray-400 mb-3 px-2">Навигация</h3>
               <div className="space-y-1">
@@ -140,7 +118,6 @@ export function SearchModal({ onClose }: SearchModalProps) {
               </div>
             </div>
           ) : (
-            // Search results
             <div>
               {filteredTasks.length > 0 ? (
                 <>
@@ -154,7 +131,6 @@ export function SearchModal({ onClose }: SearchModalProps) {
                         onClick={() => handleTaskClick(task)}
                         className="w-full flex items-start gap-3 px-3 py-3 rounded-lg hover:bg-gray-800/50 transition-colors text-left group relative overflow-hidden"
                       >
-                        {/* Color indicator */}
                         {task.color && (
                           <div
                             className="absolute left-0 top-0 bottom-0 w-1"
@@ -221,7 +197,7 @@ export function SearchModal({ onClose }: SearchModalProps) {
             <span>ESC для закрытия</span>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -60,7 +60,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
             <h1 className="text-3xl font-bold text-gray-100">DevFlow AI</h1>
           </div>
           <p className="text-gray-400 text-sm">
-            Smart task management for developers
+            Умный task management для разработчиков
           </p>
         </div>
 
@@ -68,12 +68,12 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
         <div className="bg-[#141414] border border-gray-800 rounded-2xl p-8">
           <div className="mb-6">
             <h2 className="text-2xl font-semibold text-gray-100 mb-2">
-              {isLogin ? "Welcome back" : "Create account"}
+              {isLogin ? "С возвращением" : "Создайте аккаунт"}
             </h2>
             <p className="text-gray-400 text-sm">
               {isLogin
-                ? "Sign in to access your tasks"
-                : "Get started with DevFlow AI"}
+                ? "Войдите в систему, чтобы получить доступ к своим задачам"
+                : "Начните работу с DevFlow AI"}
             </p>
           </div>
 
@@ -87,7 +87,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
             {!isLogin && (
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                  Name
+                  Имя
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -96,7 +96,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="John Doe"
+                    placeholder="Иван Иванов"
                     className="w-full pl-10 pr-4 py-3 bg-[#0f0f0f] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-700"
                     required={!isLogin}
                   />
@@ -106,7 +106,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                Email
+                Почта
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -124,7 +124,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                Password
+                Пароль
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -133,7 +133,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={isLogin ? "Enter your password" : "At least 8 characters"}
+                  placeholder={isLogin ? "Введите пароль" : "Не менее 8 символов"}
                   className="w-full pl-10 pr-10 py-3 bg-[#0f0f0f] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-700"
                   required
                 />
@@ -150,7 +150,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
             {!isLogin && (
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                  Confirm Password
+                  Подтвердите пароль
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -159,7 +159,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                     id="confirmPassword"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm your password"
+                    placeholder="Подтвердите пароль"
                     className="w-full pl-10 pr-10 py-3 bg-[#0f0f0f] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-700"
                     required={!isLogin}
                   />
@@ -179,7 +179,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
               disabled={loading}
               className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white rounded-lg transition-all font-medium mt-6"
             >
-              {loading ? "Please wait..." : isLogin ? "Sign in" : "Create account"}
+              {loading ? "Please wait..." : isLogin ? "Войти" : "Создать аккаунт"}
             </button>
           </form>
 
@@ -190,13 +190,13 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
             >
               {isLogin ? (
                 <>
-                  Don't have an account?{" "}
-                  <span className="text-blue-400 font-medium">Sign up</span>
+                  У вас нет аккаунта?{" "}
+                  <span className="text-blue-400 font-medium">Зарегистрироваться</span>
                 </>
               ) : (
                 <>
-                  Already have an account?{" "}
-                  <span className="text-blue-400 font-medium">Sign in</span>
+                  У вас уже есть аккаунт?{" "}
+                  <span className="text-blue-400 font-medium">Войти</span>
                 </>
               )}
             </button>
