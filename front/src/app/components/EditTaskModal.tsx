@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Task } from "../types";
-import { X, Check, Calendar as CalendarIcon } from "lucide-react";
+import { X, Calendar as CalendarIcon } from "lucide-react";
 import { taskStore } from "../store";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 import { TaskColorPicker } from "./TaskColorPicker";
+import { format, parse } from "date-fns";
 
 interface EditTaskModalProps {
   task: Task;
@@ -14,10 +15,8 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description || "");
   const [priority, setPriority] = useState<"low" | "medium" | "high">(task.priority);
-  const [color, setColor] = useState(task.color);
-  const [date, setDate] = useState(
-    new Date(task.date).toISOString().split("T")[0]
-  );
+  const [color, setColor] = useState(task.color || "");
+  const [date, setDate] = useState(format(task.date, "yyyy-MM-dd"));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +28,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
       description: description.trim(),
       priority,
       color,
-      date: new Date(date),
+      date: parse(date, "yyyy-MM-dd", new Date()),
     });
 
     onClose();
@@ -38,7 +37,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
   return (
     <Dialog open={true} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="bg-[#141414] border-gray-800 p-0 overflow-hidden max-w-2xl [&>button]:hidden">
-        {/* Header */}
+        {/* Заголовок */}
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
           <DialogTitle className="text-xl font-semibold text-gray-100">
             Редактировать задачу
@@ -51,9 +50,9 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
           </button>
         </div>
 
-        {/* Form */}
+        {/* Форма */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
-          {/* Title */}
+          {/* Название */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Название задачи
@@ -69,7 +68,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             />
           </div>
 
-          {/* Description */}
+          {/* Описание */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Описание
@@ -83,7 +82,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             />
           </div>
 
-          {/* Date */}
+          {/* Дата */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Дата
@@ -100,7 +99,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             </div>
           </div>
 
-          {/* Priority */}
+          {/* Приоритет */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Приоритет
@@ -142,10 +141,10 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             </div>
           </div>
 
-          {/* Color */}
+          {/* Цвет */}
           <TaskColorPicker color={color} onChange={setColor} />
 
-          {/* Actions */}
+          {/* Кнопки действия */}
           <div className="flex gap-3 pt-4">
             <button
               type="submit"

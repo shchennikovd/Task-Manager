@@ -1,21 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Check, Calendar as CalendarIcon } from "lucide-react";
+import { X, Calendar as CalendarIcon } from "lucide-react";
 import { taskStore } from "../store";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 import { TaskColorPicker } from "./TaskColorPicker";
-import { TASK_COLORS } from "../../constants/colors"; // <-- Добавили импорт констант
-
-const formatDateForInput = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const parseDateString = (dateString: string): Date => {
-  const [year, month, day] = dateString.split("-").map(Number);
-  return new Date(year, month - 1, day);
-};
+import { TASK_COLORS } from "../../constants/colors";
+import { format, parse, addDays, isToday, isTomorrow } from "date-fns";
 
 interface AddTaskModalProps {
   onClose: () => void;
@@ -25,8 +14,8 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
-  const [color, setColor] = useState(TASK_COLORS[4].value); // Теперь это работает!
-  const [date, setDate] = useState(formatDateForInput(new Date()));
+  const [color, setColor] = useState(TASK_COLORS[4].value);
+  const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
   const datePickerRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +41,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     await taskStore.addTask({
       title: title.trim(),
       description: description.trim(),
-      date: parseDateString(date),
+      date: parse(date, "yyyy-MM-dd", new Date()),
       priority,
       status: "pending",
       color,
@@ -62,27 +51,23 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   };
 
   const handleQuickDateSelect = (days: number) => {
-    const d = new Date();
-    d.setDate(d.getDate() + days);
-    setDate(formatDateForInput(d));
+    const d = addDays(new Date(), days);
+    setDate(format(d, "yyyy-MM-dd"));
     setShowCustomDatePicker(false);
   };
 
   const getDateLabel = (dateString: string): string => {
-    const d = parseDateString(dateString);
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    if (d.toDateString() === today.toDateString()) return "Сегодня";
-    if (d.toDateString() === tomorrow.toDateString()) return "Завтра";
+    const d = parse(dateString, "yyyy-MM-dd", new Date());
+    if (isToday(d)) return "Сегодня";
+    if (isTomorrow(d)) return "Завтра";
+    if (format(d, "yyyy-MM-dd") === format(addDays(new Date(), 7), "yyyy-MM-dd")) return "Через неделю";
+    
     return d.toLocaleDateString("ru-RU", { month: "short", day: "numeric" });
   };
 
   return (
     <Dialog open={true} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="bg-[#141414] border-gray-800 p-0 overflow-hidden max-w-2xl [&>button]:hidden">
-        {/* Заголовок */}
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
           <DialogTitle className="text-xl font-semibold text-gray-100 flex items-center gap-2">
             Добавить задачу
@@ -95,7 +80,6 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
           </button>
         </div>
 
-        {/* Форма с прокруткой */}
         <form
           onSubmit={handleSubmit}
           className="p-6 space-y-4 max-h-[80vh] overflow-y-auto"
@@ -137,7 +121,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                 type="button"
                 onClick={() => handleQuickDateSelect(0)}
                 className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
-                  date === formatDateForInput(new Date())
+                  date === format(new Date(), "yyyy-MM-dd")
                     ? "bg-blue-900/20 border-blue-700 text-blue-400"
                     : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
                 }`}
@@ -148,11 +132,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                 type="button"
                 onClick={() => handleQuickDateSelect(1)}
                 className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
-                  (() => {
-                    const tomorrow = new Date();
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    return date === formatDateForInput(tomorrow);
-                  })()
+                  date === format(addDays(new Date(), 1), "yyyy-MM-dd")
                     ? "bg-blue-900/20 border-blue-700 text-blue-400"
                     : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
                 }`}
@@ -163,11 +143,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                 type="button"
                 onClick={() => handleQuickDateSelect(7)}
                 className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
-                  (() => {
-                    const nextWeek = new Date();
-                    nextWeek.setDate(nextWeek.getDate() + 7);
-                    return date === formatDateForInput(nextWeek);
-                  })()
+                  date === format(addDays(new Date(), 7), "yyyy-MM-dd")
                     ? "bg-blue-900/20 border-blue-700 text-blue-400"
                     : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
                 }`}
@@ -187,7 +163,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                 {showCustomDatePicker && (
                   <input
                     type="date"
-                    defaultValue={date}
+                    value={date}
                     onChange={(e) => {
                       if (e.target.value) {
                         setDate(e.target.value);

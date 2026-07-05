@@ -30,7 +30,6 @@ export function TaskCard({ task, showDate = false }: TaskCardProps) {
   };
 
   const handleToggleStatus = (e: React.MouseEvent) => {
-    // Don't toggle if clicking on buttons
     if ((e.target as HTMLElement).closest("button")) {
       return;
     }

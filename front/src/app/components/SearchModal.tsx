@@ -24,7 +24,6 @@ export function SearchModal({ onClose }: SearchModalProps) {
   }, []);
 
   useEffect(() => {
-    // Фокус на поле поиска с задержкой, чтобы анимация Radix UI не перебила фокус
     const timeout = setTimeout(() => {
       inputRef.current?.focus();
     }, 50);
