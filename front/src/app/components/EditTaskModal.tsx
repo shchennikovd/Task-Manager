@@ -3,17 +3,7 @@ import { Task } from "../types";
 import { X, Check, Calendar as CalendarIcon } from "lucide-react";
 import { taskStore } from "../store";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
-
-const TASK_COLORS = [
-  { name: "Red", value: "#ef4444" },
-  { name: "Orange", value: "#f59e0b" },
-  { name: "Yellow", value: "#eab308" },
-  { name: "Green", value: "#10b981" },
-  { name: "Blue", value: "#3b82f6" },
-  { name: "Purple", value: "#8b5cf6" },
-  { name: "Pink", value: "#ec4899" },
-  { name: "Gray", value: "#6b7280" },
-];
+import { TaskColorPicker } from "./TaskColorPicker";
 
 interface EditTaskModalProps {
   task: Task;
@@ -153,30 +143,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
           </div>
 
           {/* Color */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Цвет
-            </label>
-            <div className="flex gap-2 flex-wrap">
-              {TASK_COLORS.map((taskColor) => (
-                <button
-                  key={taskColor.value}
-                  type="button"
-                  onClick={() => setColor(taskColor.value)}
-                  className="relative w-10 h-10 rounded-lg border-2 transition-all hover:scale-110"
-                  style={{
-                    backgroundColor: taskColor.value,
-                    borderColor: color === taskColor.value ? taskColor.value : "transparent",
-                  }}
-                  title={taskColor.name}
-                >
-                  {color === taskColor.value && (
-                    <Check className="w-5 h-5 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
+          <TaskColorPicker color={color} onChange={setColor} />
 
           {/* Actions */}
           <div className="flex gap-3 pt-4">

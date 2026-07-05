@@ -24,6 +24,7 @@ export function SearchModal({ onClose }: SearchModalProps) {
   }, []);
 
   useEffect(() => {
+    // Фокус на поле поиска с задержкой, чтобы анимация Radix UI не перебила фокус
     const timeout = setTimeout(() => {
       inputRef.current?.focus();
     }, 50);
@@ -71,7 +72,7 @@ export function SearchModal({ onClose }: SearchModalProps) {
       >
         <DialogTitle className="sr-only">Поиск по задачам</DialogTitle>
         
-        {/* Search Input */}
+        {/* Поле поиска */}
         <div className="p-4 border-b border-gray-800">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -92,7 +93,7 @@ export function SearchModal({ onClose }: SearchModalProps) {
           </div>
         </div>
 
-        {/* Content */}
+        {/* Контент */}
         <div className="flex-1 overflow-y-auto p-4">
           {searchQuery.trim() === "" ? (
             <div>
@@ -190,7 +191,7 @@ export function SearchModal({ onClose }: SearchModalProps) {
           )}
         </div>
 
-        {/* Footer hint */}
+        {/* Хинт в футере */}
         <div className="p-3 border-t border-gray-800 bg-[#0f0f0f]">
           <div className="flex items-center justify-between text-xs text-gray-600">
             <span>Используйте поиск для быстрого доступа</span>

@@ -1,21 +1,13 @@
+// src/app/components/TodayView.tsx
 import { useState, useEffect, useRef } from "react";
 import { taskStore } from "../store";
 import { Task } from "../types";
 import { TaskCard } from "./TaskCard";
-import { Filter, X, Plus, Check, Calendar } from "lucide-react";
+import { Plus, Calendar } from "lucide-react";
+import { TaskColorFilter } from "./TaskColorFilter";
+import { TaskColorPicker } from "./TaskColorPicker";
+import { TASK_COLORS } from "../../constants/colors";
 
-const TASK_COLORS = [
-  { name: "Red", value: "#ef4444" },
-  { name: "Orange", value: "#f59e0b" },
-  { name: "Yellow", value: "#eab308" },
-  { name: "Green", value: "#10b981" },
-  { name: "Blue", value: "#3b82f6" },
-  { name: "Purple", value: "#8b5cf6" },
-  { name: "Pink", value: "#ec4899" },
-  { name: "Gray", value: "#6b7280" },
-];
-
-// Форматирование даты для input[type=date] БЕЗ timezone конверсии
 const formatDateForInput = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -23,7 +15,6 @@ const formatDateForInput = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-// Парсинг строки даты в Date объект
 const parseDateString = (dateString: string): Date => {
   const [year, month, day] = dateString.split('-').map(Number);
   return new Date(year, month - 1, day);
@@ -78,7 +69,6 @@ export function TodayView() {
     return dateMatches && colorMatches;
   });
 
-  const pendingTasks = todayTasks.filter((task) => task.status === "pending");
   const completedTasks = todayTasks.filter((task) => task.status === "completed");
 
   const handleAddTask = async (e: React.FormEvent) => {
@@ -160,7 +150,7 @@ export function TodayView() {
         <form onSubmit={handleAddTask} className="mb-6 bg-[#141414] border border-gray-800 rounded-lg p-4">
           <div className="space-y-4">
             <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Название</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Название</label>
               <input
                 type="text"
                 value={newTaskTitle}
@@ -173,7 +163,7 @@ export function TodayView() {
             </div>
             
             <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">Описание</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Описание</label>
               <textarea
                 value={newTaskDescription}
                 onChange={(e) => setNewTaskDescription(e.target.value)}
@@ -185,7 +175,7 @@ export function TodayView() {
 
             {/* Date selection */}
             <div className="space-y-2">
-              <span className="text-sm text-gray-400 block">Дата:</span>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Дата</label>
               <div className="flex gap-2 flex-wrap">
                 <button
                   type="button"
@@ -243,7 +233,6 @@ export function TodayView() {
                       value={newTaskDate}
                       onChange={(e) => {
                         setNewTaskDate(e.target.value);
-
                       }}
                       className="absolute top-full mt-2 z-10 px-3 py-2 bg-[#0f0f0f] border border-gray-700 rounded-lg text-gray-100"
                       autoFocus
@@ -254,13 +243,13 @@ export function TodayView() {
               <p className="text-xs text-gray-500">Выбрана: {getDateLabel(newTaskDate)}</p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">Приоритет:</span>
-              <div className="flex gap-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Приоритет</label>
+              <div className="flex gap-2 flex-wrap">
                 <button
                   type="button"
                   onClick={() => setNewTaskPriority("low")}
-                  className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
+                  className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                     newTaskPriority === "low"
                       ? "bg-blue-900/20 border-blue-700 text-blue-400"
                       : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
@@ -271,7 +260,7 @@ export function TodayView() {
                 <button
                   type="button"
                   onClick={() => setNewTaskPriority("medium")}
-                  className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
+                  className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                     newTaskPriority === "medium"
                       ? "bg-yellow-900/20 border-yellow-700 text-yellow-400"
                       : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
@@ -282,7 +271,7 @@ export function TodayView() {
                 <button
                   type="button"
                   onClick={() => setNewTaskPriority("high")}
-                  className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
+                  className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                     newTaskPriority === "high"
                       ? "bg-red-900/20 border-red-700 text-red-400"
                       : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
@@ -293,28 +282,8 @@ export function TodayView() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">Цвет:</span>
-              <div className="flex gap-2">
-                {TASK_COLORS.map((taskColor) => (
-                  <button
-                    key={taskColor.value}
-                    type="button"
-                    onClick={() => setNewTaskColor(taskColor.value)}
-                    className="relative w-7 h-7 rounded-lg border-2 transition-all hover:scale-110"
-                    style={{
-                      backgroundColor: taskColor.value,
-                      borderColor: newTaskColor === taskColor.value ? taskColor.value : "transparent",
-                    }}
-                    title={taskColor.name}
-                  >
-                    {newTaskColor === taskColor.value && (
-                      <Check className="w-4 h-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Выбор цвета переведен на переиспользуемый компонент */}
+            <TaskColorPicker color={newTaskColor} onChange={setNewTaskColor} />
 
             <div className="flex gap-2 pt-2">
               <button
@@ -343,43 +312,8 @@ export function TodayView() {
         </form>
       )}
 
-      {/* Color filter */}
-      <div className="mb-6 flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-2 text-sm text-gray-400">
-          <Filter className="w-4 h-4" />
-          <span>Фильтр по цвету:</span>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          <button
-            onClick={() => setSelectedColor(null)}
-            className={`px-3 py-1.5 rounded-lg border transition-colors text-sm ${
-              selectedColor === null
-                ? "bg-gray-800 border-gray-600 text-gray-100"
-                : "bg-[#141414] border-gray-800 text-gray-400 hover:border-gray-700"
-            }`}
-          >
-            Все
-          </button>
-          {TASK_COLORS.map((taskColor) => (
-            <button
-              key={taskColor.value}
-              onClick={() => setSelectedColor(taskColor.value)}
-              className="relative w-8 h-8 rounded-lg border-2 transition-all hover:scale-110"
-              style={{
-                backgroundColor: taskColor.value,
-                borderColor:
-                  selectedColor === taskColor.value ? taskColor.value : "transparent",
-                opacity: selectedColor === taskColor.value ? 1 : 0.6,
-              }}
-              title={taskColor.name}
-            >
-              {selectedColor === taskColor.value && (
-                <X className="w-4 h-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Использование переиспользуемого фильтра цветов */}
+      <TaskColorFilter selectedColor={selectedColor} onChange={setSelectedColor} />
 
       {todayTasks.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
@@ -387,7 +321,6 @@ export function TodayView() {
         </div>
       ) : (
         <>
-          {/* Вертикальный список всех задач на сегодня */}
           <div className="space-y-3">
             {todayTasks
               .sort((a, b) => {

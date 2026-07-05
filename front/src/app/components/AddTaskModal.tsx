@@ -2,17 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { X, Check, Calendar as CalendarIcon } from "lucide-react";
 import { taskStore } from "../store";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
-
-const TASK_COLORS = [
-  { name: "Red", value: "#ef4444" },
-  { name: "Orange", value: "#f59e0b" },
-  { name: "Yellow", value: "#eab308" },
-  { name: "Green", value: "#10b981" },
-  { name: "Blue", value: "#3b82f6" },
-  { name: "Purple", value: "#8b5cf6" },
-  { name: "Pink", value: "#ec4899" },
-  { name: "Gray", value: "#6b7280" },
-];
+import { TaskColorPicker } from "./TaskColorPicker";
+import { TASK_COLORS } from "../../constants/colors"; // <-- Добавили импорт констант
 
 const formatDateForInput = (date: Date): string => {
   const year = date.getFullYear();
@@ -34,7 +25,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
-  const [color, setColor] = useState(TASK_COLORS[4].value);
+  const [color, setColor] = useState(TASK_COLORS[4].value); // Теперь это работает!
   const [date, setDate] = useState(formatDateForInput(new Date()));
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
   const datePickerRef = useRef<HTMLDivElement>(null);
@@ -242,30 +233,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">
-              Цвет
-            </label>
-            <div className="flex gap-2 flex-wrap">
-              {TASK_COLORS.map((tc) => (
-                <button
-                  key={tc.value}
-                  type="button"
-                  onClick={() => setColor(tc.value)}
-                  className="relative w-8 h-8 rounded-lg border-2 transition-all hover:scale-110"
-                  style={{
-                    backgroundColor: tc.value,
-                    borderColor:
-                      color === tc.value ? tc.value : "transparent",
-                  }}
-                >
-                  {color === tc.value && (
-                    <Check className="w-4 h-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
+          <TaskColorPicker color={color} onChange={setColor} />
 
           <div className="flex gap-3 pt-2">
             <button
