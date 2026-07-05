@@ -24,7 +24,8 @@ export function CalendarView() {
 
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
-  const startingDayOfWeek = firstDayOfMonth.getDay();
+  const jsDay = firstDayOfMonth.getDay();
+  const startingDayOfWeek = jsDay === 0 ? 6 : jsDay - 1;
   const daysInMonth = lastDayOfMonth.getDate();
 
   const monthName = currentDate.toLocaleDateString("ru-RU", { month: "long", year: "numeric" });
@@ -145,7 +146,7 @@ export function CalendarView() {
         <TaskColorFilter selectedColor={selectedColor} onChange={setSelectedColor} className="mb-4" />
 
         <div className="grid grid-cols-7 gap-px bg-gray-800 border border-gray-800 rounded-lg overflow-hidden">
-          {["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"].map((day) => (
+          {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map((day) => (
             <div key={day} className="bg-[#141414] p-2 text-center text-sm text-gray-300 font-medium">
               {day}
             </div>
