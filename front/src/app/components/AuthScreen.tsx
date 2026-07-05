@@ -96,7 +96,7 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                   <input
                     type="text"
-                    placeholder="Джон Доу"
+                    placeholder="Иван Иванов"
                     className={`w-full pl-10 pr-4 py-3 bg-[#0f0f0f] border rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none transition-colors ${
                       errors.name ? "border-red-500" : "border-gray-800 focus:border-gray-700"
                     }`}
