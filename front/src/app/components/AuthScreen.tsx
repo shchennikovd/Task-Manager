@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { authService } from "../auth";
 import { Sparkles, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 
@@ -6,52 +7,57 @@ interface AuthScreenProps {
   onAuthSuccess: () => void;
 }
 
+interface AuthFormData {
+  name?: string;
+  email: string;
+  password: string;
+  confirmPassword?: string;
+}
+
 export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
   const [isLogin, setIsLogin] = useState(true);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [apiError, setApiError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<AuthFormData>({
+    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
+    mode: "onChange",
+  });
+
+  const onSubmit = async (data: AuthFormData) => {
+    setApiError("");
 
     if (isLogin) {
-      const result = await authService.login(email, password);
-      if (result.success) {
-        onAuthSuccess();
-      } else {
-        setError(result.error || "Login failed");
-      }
+      const result = await authService.login(data.email, data.password);
+      if (result.success) onAuthSuccess();
+      else setApiError(result.error || "Ошибка авторизации");
     } else {
-      const result = await authService.signup(name, email, password, confirmPassword);
-      if (result.success) {
-        onAuthSuccess();
-      } else {
-        setError(result.error || "Signup failed");
-      }
+      const result = await authService.signup(
+        data.name || "",
+        data.email,
+        data.password,
+        data.confirmPassword || ""
+      );
+      if (result.success) onAuthSuccess();
+      else setApiError(result.error || "Ошибка регистрации");
     }
-
-    setLoading(false);
   };
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
-    setError("");
-    setName("");
-    setEmail("");
-    setPassword("");
+    setApiError("");
+    reset(); 
   };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo/Brand */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600">
@@ -60,82 +66,83 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
             <h1 className="text-3xl font-bold text-gray-100">DevFlow AI</h1>
           </div>
           <p className="text-gray-400 text-sm">
-            Умный task management для разработчиков
+            Умное управление задачами для разработчиков
           </p>
         </div>
 
-        {/* Auth Card */}
-        <div className="bg-[#141414] border border-gray-800 rounded-2xl p-8">
+        <div className="bg-[#141414] border border-gray-800 rounded-2xl p-8 shadow-xl">
           <div className="mb-6">
             <h2 className="text-2xl font-semibold text-gray-100 mb-2">
-              {isLogin ? "С возвращением" : "Создайте аккаунт"}
+              {isLogin ? "С возвращением" : "Создать аккаунт"}
             </h2>
             <p className="text-gray-400 text-sm">
               {isLogin
-                ? "Войдите в систему, чтобы получить доступ к своим задачам"
-                : "Начните работу с DevFlow AI"}
+                ? "Войдите, чтобы получить доступ к задачам"
+                : "Начните работу с DevFlow AI прямо сейчас"}
             </p>
           </div>
 
-          {error && (
+          {apiError && (
             <div className="mb-4 p-3 bg-red-900/20 border border-red-800 rounded-lg text-red-400 text-sm">
-              {error}
+              {apiError}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
             {!isLogin && (
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                  Имя
-                </label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Имя</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                   <input
                     type="text"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Иван Иванов"
-                    className="w-full pl-10 pr-4 py-3 bg-[#0f0f0f] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-700"
-                    required={!isLogin}
+                    placeholder="Джон Доу"
+                    className={`w-full pl-10 pr-4 py-3 bg-[#0f0f0f] border rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none transition-colors ${
+                      errors.name ? "border-red-500" : "border-gray-800 focus:border-gray-700"
+                    }`}
+                    {...register("name", { required: !isLogin ? "Имя обязательно" : false })}
                   />
                 </div>
+                {errors.name && <p className="mt-1.5 text-xs text-red-500">{errors.name.message}</p>}
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                Почта
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                 <input
                   type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-3 bg-[#0f0f0f] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-700"
-                  required
+                  className={`w-full pl-10 pr-4 py-3 bg-[#0f0f0f] border rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none transition-colors ${
+                    errors.email ? "border-red-500" : "border-gray-800 focus:border-gray-700"
+                  }`}
+                  {...register("email", {
+                    required: "Email обязателен",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Неверный формат email адресу",
+                    },
+                  })}
                 />
               </div>
+              {errors.email && <p className="mt-1.5 text-xs text-red-500">{errors.email.message}</p>}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                Пароль
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Пароль</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder={isLogin ? "Введите пароль" : "Не менее 8 символов"}
-                  className="w-full pl-10 pr-10 py-3 bg-[#0f0f0f] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-700"
-                  required
+                  placeholder={isLogin ? "Введите пароль" : "Минимум 8 символов"}
+                  className={`w-full pl-10 pr-10 py-3 bg-[#0f0f0f] border rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none transition-colors ${
+                    errors.password ? "border-red-500" : "border-gray-800 focus:border-gray-700"
+                  }`}
+                  {...register("password", {
+                    required: "Пароль обязателен",
+                    minLength: { value: 8, message: "Минимум 8 символов" },
+                  })}
                 />
                 <button
                   type="button"
@@ -145,59 +152,44 @@ export function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
                   {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                 </button>
               </div>
+              {errors.password && <p className="mt-1.5 text-xs text-red-500">{errors.password.message}</p>}
             </div>
 
             {!isLogin && (
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                  Подтвердите пароль
-                </label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Подтверждение пароля</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                   <input
                     type={showPassword ? "text" : "password"}
-                    id="confirmPassword"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Подтвердите пароль"
-                    className="w-full pl-10 pr-10 py-3 bg-[#0f0f0f] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-gray-700"
-                    required={!isLogin}
+                    placeholder="Повторите пароль"
+                    className={`w-full pl-10 pr-10 py-3 bg-[#0f0f0f] border rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none transition-colors ${
+                      errors.confirmPassword ? "border-red-500" : "border-gray-800 focus:border-gray-700"
+                    }`}
+                    {...register("confirmPassword", {
+                      validate: (value) => isLogin || value === watch("password") || "Пароли не совпадают",
+                    })}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
-                  >
-                    {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
-                  </button>
                 </div>
+                {errors.confirmPassword && <p className="mt-1.5 text-xs text-red-500">{errors.confirmPassword.message}</p>}
               </div>
             )}
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-700 disabled:to-gray-700 text-white rounded-lg transition-all font-medium mt-6"
+              disabled={isSubmitting}
+              className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white rounded-lg transition-all font-medium mt-6 shadow-md hover:shadow-lg"
             >
-              {loading ? "Please wait..." : isLogin ? "Войти" : "Создать аккаунт"}
+              {isSubmitting ? "Подождите..." : isLogin ? "Войти" : "Создать аккаунт"}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <button
-              onClick={toggleMode}
-              className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
-            >
+            <button onClick={toggleMode} type="button" className="text-sm text-gray-400 hover:text-gray-300 transition-colors">
               {isLogin ? (
-                <>
-                  У вас нет аккаунта?{" "}
-                  <span className="text-blue-400 font-medium">Зарегистрироваться</span>
-                </>
+                <>Нет аккаунта? <span className="text-blue-400 font-medium hover:underline">Зарегистрируйтесь</span></>
               ) : (
-                <>
-                  У вас уже есть аккаунт?{" "}
-                  <span className="text-blue-400 font-medium">Войти</span>
-                </>
+                <>Уже есть аккаунт? <span className="text-blue-400 font-medium hover:underline">Войти</span></>
               )}
             </button>
           </div>

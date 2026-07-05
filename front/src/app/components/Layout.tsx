@@ -12,7 +12,7 @@ function LayoutContent() {
   const [user, setUser] = useState<User | null>(null);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
-
+  
   const { isAiChatOpen, aiChatTask, openAiChat, closeAiChat } = useUi();
 
   useEffect(() => {

@@ -96,7 +96,7 @@ export function SearchModal({ onClose }: SearchModalProps) {
         <div className="flex-1 overflow-y-auto p-4">
           {searchQuery.trim() === "" ? (
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-3 px-2">Навигация</h3>
+              <h3 className="text-sm font-medium text-gray-300 mb-3 px-2">Навигация</h3>
               <div className="space-y-1">
                 {navigationItems.map((item) => (
                   <button
@@ -104,7 +104,7 @@ export function SearchModal({ onClose }: SearchModalProps) {
                     onClick={() => handleNavigate(item.path)}
                     className="w-full flex items-start gap-3 px-3 py-3 rounded-lg hover:bg-gray-800/50 transition-colors text-left group"
                   >
-                    <item.icon className="w-5 h-5 text-gray-400 group-hover:text-gray-300 mt-0.5" />
+                    <item.icon className="w-5 h-5 text-gray-300 group-hover:text-gray-300 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <div className="text-gray-100 font-medium group-hover:text-white">
                         {item.label}
@@ -121,7 +121,7 @@ export function SearchModal({ onClose }: SearchModalProps) {
             <div>
               {filteredTasks.length > 0 ? (
                 <>
-                  <h3 className="text-sm font-medium text-gray-400 mb-3 px-2">
+                  <h3 className="text-sm font-medium text-gray-300 mb-3 px-2">
                     Найдено задач: {filteredTasks.length}
                   </h3>
                   <div className="space-y-2">

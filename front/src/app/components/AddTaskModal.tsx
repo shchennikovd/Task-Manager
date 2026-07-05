@@ -74,7 +74,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
           </DialogTitle>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-gray-100"
+            className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-300 hover:text-gray-100"
           >
             <X className="w-5 h-5" />
           </button>
@@ -123,7 +123,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                 className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
                   date === format(new Date(), "yyyy-MM-dd")
                     ? "bg-blue-900/20 border-blue-700 text-blue-400"
-                    : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                    : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                 }`}
               >
                 Сегодня
@@ -134,7 +134,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                 className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
                   date === format(addDays(new Date(), 1), "yyyy-MM-dd")
                     ? "bg-blue-900/20 border-blue-700 text-blue-400"
-                    : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                    : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                 }`}
               >
                 Завтра
@@ -145,7 +145,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                 className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
                   date === format(addDays(new Date(), 7), "yyyy-MM-dd")
                     ? "bg-blue-900/20 border-blue-700 text-blue-400"
-                    : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                    : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                 }`}
               >
                 Через неделю
@@ -155,7 +155,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                 <button
                   type="button"
                   onClick={() => setShowCustomDatePicker(!showCustomDatePicker)}
-                  className="px-3 py-1.5 rounded-lg border bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700 text-sm transition-colors flex items-center gap-2"
+                  className="px-3 py-1.5 rounded-lg border bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700 text-sm transition-colors flex items-center gap-2"
                 >
                   <CalendarIcon className="w-4 h-4" />
                   Дата
@@ -196,7 +196,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
                         : p === "medium"
                         ? "bg-yellow-900/20 border-yellow-700 text-yellow-400"
                         : "bg-blue-900/20 border-blue-700 text-blue-400"
-                      : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                      : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                   }`}
                 >
                   {p === "low"
@@ -221,7 +221,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 bg-[#0f0f0f] border border-gray-800 hover:bg-gray-800 text-gray-400 rounded-lg transition-colors"
+              className="px-6 py-2.5 bg-[#0f0f0f] border border-gray-800 hover:bg-gray-800 text-gray-300 rounded-lg transition-colors"
             >
               Отмена
             </button>

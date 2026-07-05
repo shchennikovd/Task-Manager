@@ -1,7 +1,7 @@
 const API_BASE_URL =
   (import.meta as { env?: Record<string, string> }).env?.VITE_API_BASE_URL ?? "/api";
 
-class ApiError extends Error {
+export class ApiError extends Error {
   status: number;
 
   constructor(message: string, status: number) {
@@ -37,6 +37,10 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
+    }
+
     let message = `Request failed with status ${response.status}`;
     try {
       const data = (await response.json()) as { message?: string };
@@ -60,5 +64,3 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 
   return JSON.parse(text) as T;
 }
-
-export { ApiError };

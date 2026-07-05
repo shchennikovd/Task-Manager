@@ -22,7 +22,7 @@ export default function App() {
 
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center text-gray-400">
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center text-gray-300">
         Загрузка...
       </div>
     );

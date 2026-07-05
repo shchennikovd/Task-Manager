@@ -48,7 +48,7 @@ export function InboxView() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-gray-100">Входящие</h2>
-        <p className="text-gray-400 mt-1">
+        <p className="text-gray-300 mt-1">
           Все предстоящие задачи и напоминания
         </p>
       </div>
@@ -100,13 +100,13 @@ export function InboxView() {
       <div className="mt-8 p-4 bg-[#141414] border border-gray-800 rounded-lg">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-gray-400 text-sm">Всего задач</p>
+            <p className="text-gray-300 text-sm">Всего задач</p>
             <p className="text-2xl font-semibold text-gray-100 mt-1">
               {totalTasks}
             </p>
           </div>
           <div>
-            <p className="text-gray-400 text-sm">Просрочено</p>
+            <p className="text-gray-300 text-sm">Просрочено</p>
             <p className="text-2xl font-semibold text-red-400 mt-1">
               {overdueTasks.length}
             </p>

@@ -29,7 +29,7 @@ export function CompletedView() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-gray-100">Выполнено</h2>
-        <p className="text-gray-400 mt-1">Все завершенные задачи</p>
+        <p className="text-gray-300 mt-1">Все завершенные задачи</p>
       </div>
 
       {/* Color filter */}
@@ -54,7 +54,7 @@ export function CompletedView() {
           {/* Summary */}
           <div className="mt-8 p-4 bg-[#141414] border border-gray-800 rounded-lg">
             <div className="text-center">
-              <p className="text-gray-400 text-sm">Всего выполнено</p>
+              <p className="text-gray-300 text-sm">Всего выполнено</p>
               <p className="text-3xl font-semibold text-green-400 mt-2">
                 {completedTasks.length}
               </p>

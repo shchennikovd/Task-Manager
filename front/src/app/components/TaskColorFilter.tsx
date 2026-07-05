@@ -10,7 +10,7 @@ interface TaskColorFilterProps {
 export function TaskColorFilter({ selectedColor, onChange, className = "mb-6" }: TaskColorFilterProps) {
   return (
     <div className={`${className} flex items-center gap-3 flex-wrap`}>
-      <div className="flex items-center gap-2 text-sm text-gray-400">
+      <div className="flex items-center gap-2 text-sm text-gray-300">
         <Filter className="w-4 h-4" />
         <span>Фильтр по цвету:</span>
       </div>
@@ -20,7 +20,7 @@ export function TaskColorFilter({ selectedColor, onChange, className = "mb-6" }:
           className={`px-3 py-1.5 rounded-lg border transition-colors text-sm ${
             selectedColor === null
               ? "bg-gray-800 border-gray-600 text-gray-100"
-              : "bg-[#141414] border-gray-800 text-gray-400 hover:border-gray-700"
+              : "bg-[#141414] border-gray-800 text-gray-300 hover:border-gray-700"
           }`}
         >
           Все

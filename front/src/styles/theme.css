@@ -121,11 +121,11 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-gray-800 outline-ring/50;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[#0f0f0f] text-gray-100;
   }
 
   html {

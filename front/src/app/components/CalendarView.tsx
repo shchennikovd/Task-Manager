@@ -71,7 +71,7 @@ export function CalendarView() {
           isToday ? "bg-gray-900 border-gray-700" : "bg-[#0f0f0f]"
         }`}
       >
-        <div className={`text-sm mb-1 ${isToday ? "text-blue-400 font-semibold" : "text-gray-400"}`}>
+        <div className={`text-sm mb-1 ${isToday ? "text-blue-400 font-semibold" : "text-gray-300"}`}>
           {day}
         </div>
         <div className="space-y-1">
@@ -115,7 +115,7 @@ export function CalendarView() {
               className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
                 showAllTasks
                   ? "bg-gray-800 border-gray-600 text-gray-100"
-                  : "bg-[#141414] border-gray-800 text-gray-400 hover:bg-gray-800"
+                  : "bg-[#141414] border-gray-800 text-gray-300 hover:bg-gray-800"
               }`}
             >
               <List className="w-5 h-5" />
@@ -146,7 +146,7 @@ export function CalendarView() {
 
         <div className="grid grid-cols-7 gap-px bg-gray-800 border border-gray-800 rounded-lg overflow-hidden">
           {["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"].map((day) => (
-            <div key={day} className="bg-[#141414] p-2 text-center text-sm text-gray-400 font-medium">
+            <div key={day} className="bg-[#141414] p-2 text-center text-sm text-gray-300 font-medium">
               {day}
             </div>
           ))}
@@ -171,7 +171,7 @@ export function CalendarView() {
               </h3>
               <button
                 onClick={() => setShowAllTasks(false)}
-                className="p-1.5 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-gray-100"
+                className="p-1.5 hover:bg-gray-800 rounded-lg transition-colors text-gray-300 hover:text-gray-100"
               >
                 <X className="w-5 h-5" />
               </button>

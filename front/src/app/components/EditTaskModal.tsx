@@ -44,7 +44,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
           </DialogTitle>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-gray-100"
+            className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-300 hover:text-gray-100"
           >
             <X className="w-5 h-5" />
           </button>
@@ -111,7 +111,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
                 className={`flex-1 px-4 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
                   priority === "low"
                     ? "bg-blue-900/20 border-blue-700 text-blue-400"
-                    : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                    : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                 }`}
               >
                 Низкий
@@ -122,7 +122,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
                 className={`flex-1 px-4 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
                   priority === "medium"
                     ? "bg-yellow-900/20 border-yellow-700 text-yellow-400"
-                    : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                    : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                 }`}
               >
                 Средний
@@ -133,7 +133,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
                 className={`flex-1 px-4 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
                   priority === "high"
                     ? "bg-red-900/20 border-red-700 text-red-400"
-                    : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                    : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                 }`}
               >
                 Высокий
@@ -155,7 +155,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-3 bg-[#0f0f0f] border border-gray-800 hover:bg-gray-800 text-gray-400 rounded-lg transition-colors"
+              className="px-6 py-3 bg-[#0f0f0f] border border-gray-800 hover:bg-gray-800 text-gray-300 rounded-lg transition-colors"
             >
               Отмена
             </button>

@@ -134,8 +134,8 @@ class TaskStore {
     return {
       ...task,
       date: this.parseDate(task.date),
-      status: task.status ? (task.status.toLowerCase() as Task["status"]) : undefined!,
-      priority: task.priority ? (task.priority.toLowerCase() as Task["priority"]) : undefined!,
+      status: task.status ? (task.status.toLowerCase() as Task["status"]) : "pending",
+      priority: task.priority ? (task.priority.toLowerCase() as Task["priority"]) : "medium",
     };
   }
 

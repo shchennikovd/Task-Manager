@@ -93,7 +93,7 @@ export function TodayView() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-gray-100">Сегодня</h2>
-        <p className="text-gray-400 mt-1">
+        <p className="text-gray-300 mt-1">
           {new Date().toLocaleDateString("ru-RU", {
             weekday: "long",
             year: "numeric",
@@ -107,7 +107,7 @@ export function TodayView() {
       {!showAddForm ? (
         <button
           onClick={() => setShowAddForm(true)}
-          className="w-full mb-6 p-4 bg-[#141414] border border-gray-800 rounded-lg hover:border-gray-700 transition-colors flex items-center justify-center gap-2 text-gray-400 hover:text-gray-300"
+          className="w-full mb-6 p-4 bg-[#141414] border border-gray-800 rounded-lg hover:border-gray-700 transition-colors flex items-center justify-center gap-2 text-gray-300 hover:text-gray-300"
         >
           <Plus className="w-5 h-5" />
           <span>Добавить задачу на сегодня</span>
@@ -148,7 +148,7 @@ export function TodayView() {
                   className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                     newTaskDate === format(new Date(), "yyyy-MM-dd")
                       ? "bg-blue-900/20 border-blue-700 text-blue-400"
-                      : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                      : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                   }`}
                 >
                   Сегодня
@@ -159,7 +159,7 @@ export function TodayView() {
                   className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                     newTaskDate === format(addDays(new Date(), 1), "yyyy-MM-dd")
                       ? "bg-blue-900/20 border-blue-700 text-blue-400"
-                      : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                      : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                   }`}
                 >
                   Завтра
@@ -170,7 +170,7 @@ export function TodayView() {
                   className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                     newTaskDate === format(addDays(new Date(), 7), "yyyy-MM-dd")
                       ? "bg-blue-900/20 border-blue-700 text-blue-400"
-                      : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                      : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                   }`}
                 >
                   Через неделю
@@ -179,7 +179,7 @@ export function TodayView() {
                   <button
                     type="button"
                     onClick={() => setShowCustomDatePicker(!showCustomDatePicker)}
-                    className="px-4 py-2 rounded-lg border bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700 text-sm transition-colors flex items-center gap-2"
+                    className="px-4 py-2 rounded-lg border bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700 text-sm transition-colors flex items-center gap-2"
                   >
                     <Calendar className="w-4 h-4" />
                     Выбор даты
@@ -203,7 +203,7 @@ export function TodayView() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">Приоритет:</span>
+              <span className="text-sm text-gray-300">Приоритет:</span>
               <div className="flex gap-2 flex-wrap">
                 <button
                   type="button"
@@ -211,7 +211,7 @@ export function TodayView() {
                   className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                     newTaskPriority === "low"
                       ? "bg-blue-900/20 border-blue-700 text-blue-400"
-                      : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                      : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                   }`}
                 >
                   Низкий
@@ -222,7 +222,7 @@ export function TodayView() {
                   className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                     newTaskPriority === "medium"
                       ? "bg-yellow-900/20 border-yellow-700 text-yellow-400"
-                      : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                      : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                   }`}
                 >
                   Средний
@@ -233,7 +233,7 @@ export function TodayView() {
                   className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                     newTaskPriority === "high"
                       ? "bg-red-900/20 border-red-700 text-red-400"
-                      : "bg-[#0f0f0f] border-gray-800 text-gray-400 hover:border-gray-700"
+                      : "bg-[#0f0f0f] border-gray-800 text-gray-300 hover:border-gray-700"
                   }`}
                 >
                   Высокий
@@ -261,7 +261,7 @@ export function TodayView() {
                   setNewTaskDate(format(new Date(), "yyyy-MM-dd"));
                   setShowCustomDatePicker(false);
                 }}
-                className="px-4 py-2 bg-[#0f0f0f] border border-gray-800 hover:bg-gray-800 text-gray-400 rounded-lg transition-colors"
+                className="px-4 py-2 bg-[#0f0f0f] border border-gray-800 hover:bg-gray-800 text-gray-300 rounded-lg transition-colors"
               >
                 Отмена
               </button>
@@ -293,7 +293,7 @@ export function TodayView() {
       <div className="mt-8 p-4 bg-[#141414] border border-gray-800 rounded-lg">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-gray-400 text-sm">Прогресс</p>
+            <p className="text-gray-300 text-sm">Прогресс</p>
             <p className="text-2xl font-semibold text-gray-100 mt-1">
               {completedTasks.length}/{todayTasks.length}
             </p>

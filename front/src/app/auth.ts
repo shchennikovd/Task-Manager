@@ -9,6 +9,13 @@ class AuthService {
   private currentUser: User | null = null;
   private listeners: Set<() => void> = new Set();
 
+  constructor() {
+    window.addEventListener("auth:unauthorized", () => {
+      this.clearSession();
+      this.notify();
+    });
+  }
+
   subscribe(listener: () => void) {
     this.listeners.add(listener);
     return () => {
@@ -65,18 +72,10 @@ class AuthService {
     password: string,
     confirmPassword: string
   ): Promise<{ success: boolean; error?: string }> {
-    if (!name.trim()) {
-      return { success: false, error: "Name is required" };
-    }
-    if (!email.trim() || !email.includes("@")) {
-      return { success: false, error: "Valid email is required" };
-    }
-    if (password.length < 8) {
-      return { success: false, error: "Password must be at least 8 characters" };
-    }
-    if (password !== confirmPassword) {
-      return { success: false, error: "Passwords do not match" };
-    }
+    if (!name.trim()) return { success: false, error: "Name is required" };
+    if (!email.trim() || !email.includes("@")) return { success: false, error: "Valid email is required" };
+    if (password.length < 8) return { success: false, error: "Password must be at least 8 characters" };
+    if (password !== confirmPassword) return { success: false, error: "Passwords do not match" };
 
     try {
       const { authApi } = await import("./api/auth");

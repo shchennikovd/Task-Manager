@@ -17,12 +17,6 @@ export function TaskCard({ task, showDate = false }: TaskCardProps) {
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const priorityColors = {
-    low: "text-blue-400",
-    medium: "text-yellow-400",
-    high: "text-red-400",
-  };
-
   const statusIcons = {
     pending: <Circle className="w-5 h-5 text-gray-400" />,
     completed: <CheckCircle2 className="w-5 h-5 text-green-400" />,
@@ -30,9 +24,7 @@ export function TaskCard({ task, showDate = false }: TaskCardProps) {
   };
 
   const handleToggleStatus = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest("button")) {
-      return;
-    }
+    if ((e.target as HTMLElement).closest("button")) return;
     if (task.status !== "expired") {
       void taskStore.toggleTaskStatus(task.id);
     }
@@ -50,9 +42,7 @@ export function TaskCard({ task, showDate = false }: TaskCardProps) {
   };
 
   const handleDelete = () => {
-    // if (window.confirm("Вы уверены, что хотите удалить эту задачу?")) {
     void taskStore.deleteTask(task.id);
-    // }
     setShowContextMenu(false);
   };
 
@@ -71,7 +61,6 @@ export function TaskCard({ task, showDate = false }: TaskCardProps) {
         onClick={handleToggleStatus}
         onContextMenu={handleContextMenu}
       >
-        {/* Color indicator */}
         {task.color && (
           <div
             className="absolute left-0 top-0 bottom-0 w-1"
@@ -95,7 +84,6 @@ export function TaskCard({ task, showDate = false }: TaskCardProps) {
                 >
                   {PRIORITY_LABELS[task.priority]}
                 </span>
-                {/* Edit button - visible on hover */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -106,7 +94,6 @@ export function TaskCard({ task, showDate = false }: TaskCardProps) {
                 >
                   <Edit2 className="w-4 h-4" />
                 </button>
-                {/* More options button - visible on hover */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -181,7 +168,6 @@ export function TaskCard({ task, showDate = false }: TaskCardProps) {
         </>
       )}
 
-      {/* Edit Modal */}
       {showEditModal && (
         <EditTaskModal task={task} onClose={() => setShowEditModal(false)} />
       )}
