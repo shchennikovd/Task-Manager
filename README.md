@@ -75,6 +75,7 @@ project-root/
 
 - **Главный дашборд и задачи:** 
 <img src="./photoForREADME/addTask.png" width="800">
+
 - **Календарь задач:** 
 <img src="./photoForREADME/calendar.png" width="800">
 
