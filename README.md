@@ -73,9 +73,10 @@ project-root/
 
 # 📸 Скриншоты
 
-- **Главный дашборд и задачи:** `![Dashboard](./docs/dashboard.png)`
-- **AI-Ассистент:** `![AI Chat](./docs/ai-chat.png)`
-- **Календарь задач:** `![Calendar](./docs/calendar.png)`
+- **Главный дашборд и задачи:** 
+<img src="./photoForREADME/addTask.png" width="800">
+- **Календарь задач:** 
+<img src="./photoForREADME/calendar.png" width="800">
 
 ---
 
