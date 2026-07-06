@@ -1,0 +1,132 @@
+package com.taskmanager.backend.Tasks.service;
+
+import com.taskmanager.backend.Tasks.dto.CreateTaskRequest;
+import com.taskmanager.backend.Tasks.dto.TaskResponse;
+import com.taskmanager.backend.Tasks.dto.UpdateTaskRequest;
+import com.taskmanager.backend.Tasks.entity.Task;
+import com.taskmanager.backend.Tasks.enums.Priority;
+import com.taskmanager.backend.Tasks.enums.Status;
+import com.taskmanager.backend.Tasks.repository.TaskRepository;
+import com.taskmanager.backend.entity.User;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class TaskService {
+
+    private final TaskRepository taskRepository;
+
+    public TaskService(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
+    // CREATE
+    public TaskResponse createTask(CreateTaskRequest request) {
+        User user = getCurrentUser();
+
+        Task task = new Task();
+
+        task.setUser(user);
+        task.setTitle(request.getTitle());
+        task.setDescription(request.getDescription());
+        task.setDate(request.getDate());
+        task.setColor(request.getColor());
+
+        if (request.getPriority() != null) {
+            task.setPriority(Priority.valueOf(request.getPriority().toUpperCase()));
+        }
+
+        if (request.getStatus() != null) {
+            task.setStatus(Status.valueOf(request.getStatus().toUpperCase()));
+        }
+
+        Task saved = taskRepository.save(task);
+
+        return mapToResponse(saved);
+    }
+
+    // GET ALL
+    public List<TaskResponse> getAllTasks() {
+        User user = getCurrentUser();
+
+        return taskRepository.findByUser(user)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    // GET BY ID
+    public TaskResponse getTaskById(UUID id) {
+        User user = getCurrentUser();
+
+        Task task = taskRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        return mapToResponse(task);
+    }
+
+    // UPDATE (PATCH)
+    public TaskResponse updateTask(UUID id, UpdateTaskRequest request) {
+        User user = getCurrentUser();
+
+        Task task = taskRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (request.getTitle() != null) task.setTitle(request.getTitle());
+        if (request.getDescription() != null) task.setDescription(request.getDescription());
+        if (request.getDate() != null) task.setDate(request.getDate());
+        if (request.getColor() != null) task.setColor(request.getColor());
+
+        if (request.getPriority() != null) {
+            task.setPriority(Priority.valueOf(request.getPriority().toUpperCase()));
+        }
+
+        if (request.getStatus() != null) {
+            task.setStatus(Status.valueOf(request.getStatus().toUpperCase()));
+        }
+
+        return mapToResponse(taskRepository.save(task));
+    }
+
+    // DELETE
+    public void deleteTask(UUID id) {
+        User user = getCurrentUser();
+
+        Task task = taskRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        taskRepository.delete(task);
+    }
+
+    private User getCurrentUser() {
+        Object principal = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (principal instanceof User user) {
+            return user;
+        }
+
+        throw new RuntimeException("User not authenticated");
+    }
+
+    // MAPPER (чтобы не дублировать код)
+    private TaskResponse mapToResponse(Task task) {
+        TaskResponse response = new TaskResponse();
+
+        response.setId(task.getId());
+        response.setTitle(task.getTitle());
+        response.setDescription(task.getDescription());
+        response.setDate(task.getDate());
+        response.setColor(task.getColor());
+
+        response.setPriority(task.getPriority() != null ? task.getPriority().name() : null);
+        response.setStatus(task.getStatus() != null ? task.getStatus().name() : null);
+
+        return response;
+    }
+}
